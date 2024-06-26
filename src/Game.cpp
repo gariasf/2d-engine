@@ -97,7 +97,7 @@ void Game::Render() {
 void Game::Run()
 {
     Setup();
-    while (true)
+    while (isRunning)
     {
         ProcessInput();
         Update();
