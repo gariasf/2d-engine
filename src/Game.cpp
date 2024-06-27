@@ -1,8 +1,10 @@
-#include "Game.h"
 #include <iostream>
 #include "glm/glm.hpp"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+
+#include "Game.h"
+#include "Logger.h"
 
 const int FPS = 60;
 const int MS_PER_FRAME = 1000 / FPS;
@@ -10,17 +12,17 @@ const int MS_PER_FRAME = 1000 / FPS;
 Game::Game()
 {
     isRunning = false;
-    std::cout << "Game constructor called" << std::endl;
+    Logger::Log("Game constructor called");
 }
 Game::~Game()
 {
-    std::cout << "Game destructor called" << std::endl;
+    Logger::Log("Game destructor called");
 }
 void Game::Initialize()
 {
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
     {
-        std::cerr << "Error initializing SDL." << std::endl;
+        Logger::Err("Error initializing SDL.");
         return;
     }
 
@@ -40,7 +42,7 @@ void Game::Initialize()
 
     if (!window)
     {
-        std::cerr << "Error creating window." << std::endl;
+        Logger::Err("Error creating window.");
         return;
     }
 
@@ -48,7 +50,7 @@ void Game::Initialize()
 
     if (!renderer)
     {
-        std::cerr << "Error creating renderer." << std::endl;
+        Logger::Err("Error creating renderer.");
         return;
     }
 
@@ -89,7 +91,8 @@ void Game::Setup()
 void Game::Update()
 {
     int msToDelay = MS_PER_FRAME - (SDL_GetTicks() - msPreviousFrame);
-    if(msToDelay > 0 && msToDelay <= MS_PER_FRAME) {
+    if (msToDelay > 0 && msToDelay <= MS_PER_FRAME)
+    {
         SDL_Delay(msToDelay);
     }
 
