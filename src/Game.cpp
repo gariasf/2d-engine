@@ -4,7 +4,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-const int FPS = 30;
+const int FPS = 60;
 const int MS_PER_FRAME = 1000 / FPS;
 
 Game::Game()
@@ -83,7 +83,7 @@ glm::vec2 playerVelocity;
 void Game::Setup()
 {
     playerPosition = glm::vec2(10.0, 20.0);
-    playerVelocity = glm::vec2(0.5, 0.0);
+    playerVelocity = glm::vec2(100.0, 0.0);
 }
 
 void Game::Update()
@@ -93,9 +93,11 @@ void Game::Update()
         SDL_Delay(msToDelay);
     }
 
-    msPreviousFrame = SDL_GetTicks();
-    playerPosition.x += playerVelocity.x;
-    playerPosition.y += playerVelocity.y;
+    double deltaTime = (SDL_GetTicks() - msPreviousFrame) / 1000;
+
+        msPreviousFrame = SDL_GetTicks();
+        playerPosition.x += playerVelocity.x * deltaTime;
+        playerPosition.y += playerVelocity.y * deltaTime;
 }
 void Game::Render()
 {
