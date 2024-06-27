@@ -1,7 +1,19 @@
+CC = g++
+LANG_STD = -std=c++17
+COMPILER_FLAGS = -Wall -Wfatal-errors
+INCLUDE_PATH = -I"./libs"
+INCLUDE_PATH_MACOS = -I/opt/homebrew/include -I/opt/homebrew/include/SDL2
+SRC_FILES = ./src/*.cpp \
+			./src/Game/*.cpp \
+			./src/Logger/*.cpp
+LINKER_FLAGS = -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer -llua5.3
+LINKER_FLAGS_MACOS =  -L/opt/homebrew/lib -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer -llua
+OUT_PATH = ./dist/gameengine
+
 build:
-	g++ -Wall -std=c++17 -I"./libs" src/*.cpp -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer -llua5.3 -o ./dist/gameengine
-#macos	g++ -Wall -std=c++17 -I"./libs" -I/opt/homebrew/include -I/opt/homebrew/include/SDL2 src/*.cpp -L/opt/homebrew/lib -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer -llua -o ./dist/gameengine
+	$(CC) $(COMPILER_FLAGS) $(LANG_STD) $(INCLUDE_PATH) $(SRC_FILES) $(LINKER_FLAGS) -o $(OUT_PATH)
+#macos	$(CC) $(COMPILER_FLAGS) $(LANG_STD) $(INCLUDE_PATH_MACOS) $(SRC_FILES) $(LINKER_FLAGS_MACOS) -o $(OUT_PATH)
 run:
-	./dist/gameengine
+	$(OUT_PATH)
 clean:
-	rm ./dist/gameengine
+	rm $(OUT_PATH)
