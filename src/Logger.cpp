@@ -4,8 +4,8 @@
 #include <ctime>
 #include <vector>
 
-
-std::string CurrentDateTimeToString() {
+std::string CurrentDateTimeToString()
+{
     std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
     std::string output(30, '\0');
     std::strftime(&output[0], output.size(), "&d-%b-%Y %H:%M:%S", std::localtime(&now));
@@ -14,7 +14,8 @@ std::string CurrentDateTimeToString() {
 
 std::vector<LogEntry> Logger::messages;
 
-void Logger::Log(const std::string& message) {
+void Logger::Log(const std::string &message)
+{
     LogEntry logEntry;
     logEntry.type = LogType::LOG_INFO;
     logEntry.message = "LOG: [" + CurrentDateTimeToString() + "]: " + message;

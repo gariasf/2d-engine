@@ -1,9 +1,10 @@
 #pragma once
 
 #include <string>
-#include<vector>
+#include <vector>
 
-enum LogType {
+enum LogType
+{
     LOG_INFO,
     LOG_WARNING,
     LOG_ERROR
