@@ -6,6 +6,7 @@ class Game
 {
 private:
     bool isRunning;
+    int msPreviousFrame = 0;
     SDL_Window *window;
     SDL_Renderer *renderer;
 
