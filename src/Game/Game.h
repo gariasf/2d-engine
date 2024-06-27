@@ -2,6 +2,10 @@
 
 #include <SDL2/SDL.h>
 
+const int FPS = 60;
+const int MS_PER_FRAME = 1000 / FPS;
+
+
 class Game
 {
 private:

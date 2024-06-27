@@ -1,13 +1,9 @@
+#include "Game.h"
+#include "../Logger/Logger.h"
 #include <iostream>
 #include "glm/glm.hpp"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-
-#include "Game.h"
-#include "Logger.h"
-
-const int FPS = 60;
-const int MS_PER_FRAME = 1000 / FPS;
 
 Game::Game()
 {
@@ -96,9 +92,10 @@ void Game::Update()
         SDL_Delay(msToDelay);
     }
 
-    double deltaTime = (SDL_GetTicks() - msPreviousFrame) / 1000;
+    double deltaTime = (SDL_GetTicks() - msPreviousFrame) / 1000.0;
 
     msPreviousFrame = SDL_GetTicks();
+    
     playerPosition.x += playerVelocity.x * deltaTime;
     playerPosition.y += playerVelocity.y * deltaTime;
 }
