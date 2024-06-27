@@ -95,9 +95,9 @@ void Game::Update()
 
     double deltaTime = (SDL_GetTicks() - msPreviousFrame) / 1000;
 
-        msPreviousFrame = SDL_GetTicks();
-        playerPosition.x += playerVelocity.x * deltaTime;
-        playerPosition.y += playerVelocity.y * deltaTime;
+    msPreviousFrame = SDL_GetTicks();
+    playerPosition.x += playerVelocity.x * deltaTime;
+    playerPosition.y += playerVelocity.y * deltaTime;
 }
 void Game::Render()
 {
