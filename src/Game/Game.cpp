@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "../Logger/Logger.h"
+#include "../ECS/ECS.h"
 #include <iostream>
 #include "glm/glm.hpp"
 #include <SDL2/SDL.h>
@@ -80,8 +81,7 @@ glm::vec2 playerVelocity;
 
 void Game::Setup()
 {
-    playerPosition = glm::vec2(10.0, 20.0);
-    playerVelocity = glm::vec2(100.0, 0.0);
+   
 }
 
 void Game::Update()
