@@ -6,46 +6,73 @@
 const unsigned int MAX_COMPONENTS = 32;
 typedef std::bitset<MAX_COMPONENTS> Signature;
 
-struct BaseComponent {
-    protected:
-        static int nextId;
+struct BaseComponent
+{
+protected:
+    static int nextId;
 };
 
 template <typename TComponent>
 class Component : public BaseComponent
 {
-    static int GetId() {
+    static int GetId()
+    {
         static auto id = nextId++;
         return id;
-
     }
 };
 
-class Entity {
-    private:
-        int id;
-    public:
-        Entity(int id): id(id) {}
-        int GetId() const;
+class Entity
+{
+private:
+    int id;
+
+public:
+    Entity(int id) : id(id) {}
+    Entity(const Entity& entity) = default;
+    int GetId() const;
+
+    Entity &operator=(const Entity &other) = default;
+    bool operator==(const Entity &other) const
+    {
+        return id == other.id;
+    }
+    bool operator!=(const Entity &other) const
+    {
+        return id != other.id;
+    }
+    bool operator>(const Entity &other) const
+    {
+        return id > other.id;
+    }
+    bool operator<(const Entity &other) const
+    {
+        return id < other.id;
+    }
 };
 
-class System {
-    private:
-        Signature componentSignature;
-        std::vector<Entity> entities;
-    public:
-        System() = default;
-        ~System() = default;
+class System
+{
+private:
+    Signature componentSignature;
+    std::vector<Entity> entities;
 
-        void AddEntity(Entity entity);
-        void RemoveEntity(Entity entity);
-        std::vector<Entity> GetEntities() const;
-        const Signature& GetSignature() const;
+public:
+    System() = default;
+    ~System() = default;
 
-        template <typename TComponent> void RequireComponent();
+    void AddEntity(Entity entity);
+    void RemoveEntity(Entity entity);
+    std::vector<Entity> GetEntities() const;
+    const Signature &GetSignature() const;
+
+    template <typename TComponent>
+    void RequireComponent();
 };
 
-class Registry {};
+class Registry
+{
+};
 
 template <typename TComponent>
 void System::RequireComponent()
