@@ -5,18 +5,19 @@
 #include <set>
 #include <unordered_map>
 #include <typeindex>
+#include <memory>
 
 const unsigned int MAX_COMPONENTS = 32;
 typedef std::bitset<MAX_COMPONENTS> Signature;
 
-struct BaseComponent
+struct IComponent
 {
 protected:
     static int nextId;
 };
 
 template <typename TComponent>
-class Component : public BaseComponent
+class Component : public IComponent
 {
     static int GetId()
     {
@@ -140,17 +141,21 @@ class Registry
         void Update();
 
         Entity CreateEntity();
-
         void AddEntity(Entity entity);
 
         template <typename TComponent, typename ...TArgs> void AddComponent(
             Entity entity,
             TArgs&& ...args
         );
-
         template <typename TComponent> void RemoveComponent(Entity entity);
         template <typename TComponent> bool HasComponent(Entity entity);
 
+        template <typename TSystem, typename ...TArgs> void AddSystem(TArgs&& ...args);
+        template <typename TSystem> void RemoveSystem();
+        template <typename TSystem> bool HasSystem() const;
+        template <typename TSystem> TSystem& GetSystem() const;
+
+        void AddEntityToSystems(Entity entity);
 };
 
 template <typename TComponent>
@@ -201,4 +206,24 @@ bool Registry::HasComponent(Entity entity) {
     const auto entityId = entity.GetId();
 
     return componentSignatures[entityId].test(componentId);
+}
+
+
+template <typename TSystem, typename ...TArgs>
+void Registry::AddSystem (TArgs&& ...args) {
+    TSystem* newSystem(new TSystem(std::forward<TArgs>(args)...));
+    systems.insert(std::make_pair(std::type_index(typeid(TSystem)), newSystem));
+}
+
+template <typename TSystem>
+void Registry::RemoveSystem () {
+    auto system = systems.find(std::type_index(typeid(TSystem)));
+    systems.erase(system);
+}
+
+
+template <typename TSystem>
+bool Registry::HasSystem() const {
+    auto system = systems.find(std::type_index(typeid(TSystem)));
+    return *(std::static_pointer_cast<TSystem>(system->second));
 }
