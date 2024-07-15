@@ -257,7 +257,8 @@ bool Registry::HasSystem() const {
 template <typename TSystem>
 inline TSystem &Registry::GetSystem() const
 {
-    return systems.find(std::type_index(typeid(TSystem)));
+    auto system = systems.find(std::type_index(typeid(TSystem)));
+    return *(std::static_pointer_cast<TSystem>(system->second));
 }
 
 template <typename TComponent, typename... TArgs>

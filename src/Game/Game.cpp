@@ -3,6 +3,7 @@
 #include "../ECS/ECS.h"
 #include "../Components/TransformComponent.h"
 #include "../Components/RigidBodyComponent.h"
+#include "../Systems/MovementSystem.h"
 #include <iostream>
 #include "glm/glm.hpp"
 #include <SDL2/SDL.h>
@@ -12,12 +13,9 @@ Game::Game()
 {
     isRunning = false;
     registry = std::make_unique<Registry>();
-    Logger::Log("Game constructor called");
 }
-Game::~Game()
-{
-    Logger::Log("Game destructor called");
-}
+Game::~Game() {}
+
 void Game::Initialize()
 {
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
@@ -84,11 +82,12 @@ glm::vec2 playerVelocity;
 
 void Game::Setup()
 {
-   Entity tank = registry->CreateEntity();
+    registry->AddSystem<MovementSystem>();
 
-   tank.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(1.0, 1.0), 0.0);
-   tank.AddComponent<RigidBodyComponent>(glm::vec2(50.0, 0.0));
-   tank.RemoveComponent<TransformComponent>();
+    Entity tank = registry->CreateEntity();
+
+    tank.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(1.0, 1.0), 0.0);
+    tank.AddComponent<RigidBodyComponent>(glm::vec2(50.0, 0.0));
 }
 
 void Game::Update()
@@ -102,27 +101,15 @@ void Game::Update()
     double deltaTime = (SDL_GetTicks() - msPreviousFrame) / 1000.0;
 
     msPreviousFrame = SDL_GetTicks();
-    
-    playerPosition.x += playerVelocity.x * deltaTime;
-    playerPosition.y += playerVelocity.y * deltaTime;
+
+    registry->Update();
+
+    registry->GetSystem<MovementSystem>().Update(deltaTime);
 }
 void Game::Render()
 {
     SDL_SetRenderDrawColor(renderer, 21, 21, 21, 255);
     SDL_RenderClear(renderer);
-
-    SDL_Surface *surface = IMG_Load("./assets/images/tank-tiger-right.png");
-    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
-    SDL_FreeSurface(surface);
-
-    SDL_Rect dstRect = {
-        static_cast<int>(playerPosition.x),
-        static_cast<int>(playerPosition.y),
-        32,
-        32};
-
-    SDL_RenderCopy(renderer, texture, NULL, &dstRect);
-    SDL_DestroyTexture(texture);
     SDL_RenderPresent(renderer);
 }
 void Game::Run()
