@@ -7,6 +7,8 @@
 #include <typeindex>
 #include <memory>
 
+#include "../Logger/Logger.h"
+
 const unsigned int MAX_COMPONENTS = 32;
 typedef std::bitset<MAX_COMPONENTS> Signature;
 
@@ -19,11 +21,12 @@ protected:
 template <typename TComponent>
 class Component : public IComponent
 {
-    static int GetId()
-    {
-        static auto id = nextId++;
-        return id;
-    }
+    public:
+        static int GetId()
+        {
+            static auto id = nextId++;
+            return id;
+        }
 };
 
 class Entity
@@ -170,7 +173,8 @@ void Registry::AddComponent(Entity entity, TArgs&& ...args) {
     const auto componentId = Component<TComponent>::GetId();
     const auto entityId = entity.GetId();
 
-    if (componentId >= componentPools.size()) {
+    if (componentId >= static_cast<int>(componentPools.size()))
+    {
         componentPools.resize(componentId + 1, nullptr);
     }
 
@@ -189,6 +193,8 @@ void Registry::AddComponent(Entity entity, TArgs&& ...args) {
 
     componentPool->Set(entityId, newComponent);
     componentSignatures[entityId].set(componentId);
+
+    Logger::Log("Component id = " + std::to_string(componentId) + " was added to entity id = " + std::to_string(entityId));
 }
 
 
