@@ -7,6 +7,7 @@
 #include "../Systems/MovementSystem.h"
 #include "../Systems/RenderSystem.h"
 #include <iostream>
+#include <fstream>
 #include "glm/glm.hpp"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -84,16 +85,40 @@ void Game::ProcessInput()
     }
 }
 
-glm::vec2 playerPosition;
-glm::vec2 playerVelocity;
-
-void Game::Setup()
-{
+void Game::LoadLevel(int level) {
     registry->AddSystem<MovementSystem>();
     registry->AddSystem<RenderSystem>();
 
     assetStore->AddTexture(renderer, "tank-image", "./assets/images/tank-panther-right.png");
     assetStore->AddTexture(renderer, "truck-image", "./assets/images/truck-ford-right.png");
+    assetStore->AddTexture(renderer, "tilemap-image", "./assets/tilemaps/jungle.png");
+
+    int tileSize = 32;
+    double tileScale = 3.0;
+    int mapNumCols = 25;
+    int mapNumRows = 20;
+    std::fstream mapFile;
+    mapFile.open("./assets/tilemaps/jungle.map");
+
+    for (int y = 0; y < mapNumRows; y++) {
+        for (int x = 0; x < mapNumCols; x++) {
+            char pos;
+            mapFile.get(pos);
+            int srcRectY = std::atoi(&pos) * tileSize;
+            mapFile.get(pos);
+            int srcRectX = std::atoi(&pos) * tileSize;
+            mapFile.ignore();
+
+            Entity tile = registry->CreateEntity();
+            tile.AddComponent<TransformComponent>(
+                glm::vec2(x * (tileScale * tileSize), y * (tileScale * tileSize)),
+                glm::vec2(tileScale, tileScale),
+                0.0);
+            tile.AddComponent<SpriteComponent>("tilemap-image", tileSize, tileSize, srcRectX, srcRectY);
+        }
+    }
+
+    mapFile.close();
 
     Entity tank = registry->CreateEntity();
     tank.AddComponent<TransformComponent>(glm::vec2(10.0, 10.0), glm::vec2(2.0, 2.0), 0.0);
@@ -104,6 +129,11 @@ void Game::Setup()
     truck.AddComponent<TransformComponent>(glm::vec2(50.0, 100.0), glm::vec2(2.0, 2.0), 0.0);
     truck.AddComponent<RigidBodyComponent>(glm::vec2(0.0, 50.0));
     truck.AddComponent<SpriteComponent>("truck-image", 32, 32);
+}
+
+void Game::Setup()
+{
+   LoadLevel(1);
 }
 
 void Game::Update()
