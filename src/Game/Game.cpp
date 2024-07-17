@@ -11,6 +11,8 @@
 #include "../Systems/AnimationSystem.h"
 #include "../Systems/CollisionSystem.h"
 #include "../Systems/RenderColliderSystem.h"
+#include "../Systems/KeyboardControlSystem.h"
+#include "../Systems/DamageSystem.h"
 #include <iostream>
 #include <fstream>
 #include "glm/glm.hpp"
@@ -23,6 +25,7 @@ Game::Game()
     isRunning = false;
     registry = std::make_unique<Registry>();
     assetStore = std::make_unique<AssetStore>();
+     eventBus = std::make_unique<EventBus>();
     Logger::Log("Game created.");
 }
 Game::~Game()
@@ -90,6 +93,7 @@ void Game::ProcessInput()
             if(sdlEvent.key.keysym.sym == SDLK_d) {
                 isDebug = !isDebug;
             }
+            eventBus->EmitEvent<KeyPressedEvent>(sdlEvent.key.keysym.sym);
             break;
         }
     }
@@ -101,6 +105,8 @@ void Game::LoadLevel(int level) {
     registry->AddSystem<AnimationSystem>();
     registry->AddSystem<CollisionSystem>();
     registry->AddSystem<RenderColliderSystem>();
+    registry->AddSystem<DamageSystem>();
+    registry->AddSystem<KeyboardControlSystem>();
 
     assetStore->AddTexture(renderer, "tank-image", "./assets/images/tank-panther-right.png");
     assetStore->AddTexture(renderer, "truck-image", "./assets/images/truck-ford-right.png");
@@ -178,11 +184,19 @@ void Game::Update()
 
     msPreviousFrame = SDL_GetTicks();
 
+
+    eventBus->Reset();
+
+    registry->GetSystem<DamageSystem>().SubscribeToEvents(eventBus);
+    registry->GetSystem<KeyboardControlSystem>().SubscribeToEvents(eventBus);
+
     registry->Update();
 
     registry->GetSystem<MovementSystem>().Update(deltaTime);
     registry->GetSystem<AnimationSystem>().Update();
-    registry->GetSystem<CollisionSystem>().Update();
+    registry->GetSystem<CollisionSystem>().Update(eventBus);
+    registry->GetSystem<DamageSystem>().Update();
+    registry->GetSystem<KeyboardControlSystem>().Update();
 }
 void Game::Render()
 {

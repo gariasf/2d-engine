@@ -23,11 +23,11 @@ class EventCallback: public IEventCallback {
     private:
         typedef void (TOwner::*CallbackFunction)(TEvent&);
 
-        TOwner ownerInstance;
+        TOwner* ownerInstance;
         CallbackFunction callbackFunction;
 
         virtual void Call(Event& e) override {
-            std::invoke(callbackFunction, ownerInstance, static_cast<TEvent>(e));
+            std::invoke(callbackFunction, ownerInstance, static_cast<TEvent&>(e));
         }
 
     public:
@@ -52,8 +52,12 @@ class EventBus {
              Logger::Log("EventBus destroyed.");
         }
 
+        void Reset() {
+            subscribers.clear();
+        }
+
         template <typename TEvent, typename TOwner>
-        void SubscribeToEvent(TOwner* ownerInstance, void (TOwner::*callbackFunction)(TEvent)) {
+        void SubscribeToEvent(TOwner* ownerInstance, void (TOwner::*callbackFunction)(TEvent&)) {
 
             if(!subscribers[typeid(TEvent)].get()) {
                 subscribers[typeid(TEvent)] = std::make_unique<EventHandlers>();
