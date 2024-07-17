@@ -6,6 +6,7 @@
 #include "../Components/SpriteComponent.h"
 #include "../Components/AnimationComponent.h"
 #include "../Components/BoxColliderComponent.h"
+#include "../Components/KeyboardControlledComponent.h"
 #include "../Systems/MovementSystem.h"
 #include "../Systems/RenderSystem.h"
 #include "../Systems/AnimationSystem.h"
@@ -25,7 +26,7 @@ Game::Game()
     isRunning = false;
     registry = std::make_unique<Registry>();
     assetStore = std::make_unique<AssetStore>();
-     eventBus = std::make_unique<EventBus>();
+    eventBus = std::make_unique<EventBus>();
     Logger::Log("Game created.");
 }
 Game::~Game()
@@ -110,7 +111,7 @@ void Game::LoadLevel(int level) {
 
     assetStore->AddTexture(renderer, "tank-image", "./assets/images/tank-panther-right.png");
     assetStore->AddTexture(renderer, "truck-image", "./assets/images/truck-ford-right.png");
-    assetStore->AddTexture(renderer, "chopper-image", "./assets/images/chopper.png");
+    assetStore->AddTexture(renderer, "chopper-image", "./assets/images/chopper-spritesheet.png");
     assetStore->AddTexture(renderer, "radar-image", "./assets/images/radar.png");
     assetStore->AddTexture(renderer, "tilemap-image", "./assets/tilemaps/jungle.png");
 
@@ -147,6 +148,13 @@ void Game::LoadLevel(int level) {
     chopper.AddComponent<RigidBodyComponent>(glm::vec2(0.0, 0.0));
     chopper.AddComponent<SpriteComponent>("chopper-image", 32, 32, 1);
     chopper.AddComponent<AnimationComponent>(2, 15, true);
+    chopper.AddComponent<KeyboardControlledComponent>(
+        glm::vec2(0, -20),
+        glm::vec2(20, 0),
+        glm::vec2(0, 20),
+        glm::vec2(-20, 0)
+    );
+
 
     Entity radar = registry->CreateEntity();
     radar.AddComponent<TransformComponent>(glm::vec2(windowWidth - 74, 10), glm::vec2(1.0, 1.0), 0.0);
@@ -183,7 +191,6 @@ void Game::Update()
     double deltaTime = (SDL_GetTicks() - msPreviousFrame) / 1000.0;
 
     msPreviousFrame = SDL_GetTicks();
-
 
     eventBus->Reset();
 
