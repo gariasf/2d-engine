@@ -142,7 +142,7 @@ class Registry
         std::vector<std::shared_ptr<IPool>> componentPools;
         std::vector<Signature> componentSignatures;
 
-        std::unordered_map < std::type_index, std::shared_ptr<System>> systems;
+        std::unordered_map <std::type_index, std::shared_ptr<System>> systems;
 
         std::set<Entity> entitiesToBeAdded;
         std::set<Entity> entitiesToBeKilled;
