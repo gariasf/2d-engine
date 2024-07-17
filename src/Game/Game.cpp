@@ -10,6 +10,7 @@
 #include "../Systems/RenderSystem.h"
 #include "../Systems/AnimationSystem.h"
 #include "../Systems/CollisionSystem.h"
+#include "../Systems/RenderColliderSystem.h"
 #include <iostream>
 #include <fstream>
 #include "glm/glm.hpp"
@@ -18,6 +19,7 @@
 
 Game::Game()
 {
+    isDebug = false;
     isRunning = false;
     registry = std::make_unique<Registry>();
     assetStore = std::make_unique<AssetStore>();
@@ -84,6 +86,10 @@ void Game::ProcessInput()
             {
                 isRunning = false;
             }
+
+            if(sdlEvent.key.keysym.sym == SDLK_d) {
+                isDebug = !isDebug;
+            }
             break;
         }
     }
@@ -94,6 +100,7 @@ void Game::LoadLevel(int level) {
     registry->AddSystem<RenderSystem>();
     registry->AddSystem<AnimationSystem>();
     registry->AddSystem<CollisionSystem>();
+    registry->AddSystem<RenderColliderSystem>();
 
     assetStore->AddTexture(renderer, "tank-image", "./assets/images/tank-panther-right.png");
     assetStore->AddTexture(renderer, "truck-image", "./assets/images/truck-ford-right.png");
@@ -183,6 +190,10 @@ void Game::Render()
     SDL_RenderClear(renderer);
 
     registry->GetSystem<RenderSystem>().Update(renderer, assetStore);
+
+    if(isDebug) {
+        registry->GetSystem<RenderColliderSystem>().Update(renderer);
+    }
 
     SDL_RenderPresent(renderer);
 }
