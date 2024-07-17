@@ -5,6 +5,7 @@
 
 #include "../ECS/ECS.h"
 #include "../AssetStore/AssetStore.h"
+#include "../EventBus/EventBus.h"
 
 const int FPS = 60;
 const int MS_PER_FRAME = 1000 / FPS;
@@ -21,6 +22,7 @@ private:
 
     std::unique_ptr<Registry> registry;
     std::unique_ptr<AssetStore> assetStore;
+    std::unique_ptr<EventBus> eventBus;
 
 public:
     Game();
