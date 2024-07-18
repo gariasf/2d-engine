@@ -27,6 +27,7 @@ template <typename TComponent>
 class Component : public IComponent
 {
     public:
+        // Returns the unique id of Component<T>
         static int GetId()
         {
             static auto id = nextId++;
@@ -50,6 +51,11 @@ public:
    	void Group(const std::string& group);
    	bool BelongsToGroup(const std::string& group) const;
 
+    template <typename TComponent, typename ...TArgs> void AddComponent(TArgs&& ...args);
+    template <typename TComponent> void RemoveComponent();
+    template <typename TComponent> bool HasComponent() const;
+    template <typename TComponent> TComponent& GetComponent() const;
+
     Entity &operator=(const Entity &other) = default;
     bool operator==(const Entity &other) const
     {
@@ -68,15 +74,11 @@ public:
         return id < other.id;
     }
 
-    template <typename TComponent, typename ...TArgs> void AddComponent(TArgs&& ...args);
-    template <typename TComponent> void RemoveComponent();
-    template <typename TComponent> bool HasComponent() const;
-    template <typename TComponent> TComponent& GetComponent() const;
-
 
     class Registry* registry;
 };
 
+// The system processes entities that contain a specific signature
 class System
 {
 private:
@@ -96,6 +98,7 @@ public:
     void RequireComponent();
 };
 
+// Used to hold a contiguous vector of objects of type T
 class IPool {
     public:
         virtual ~IPool() {}
@@ -146,6 +149,8 @@ class Pool : public IPool {
         }
 };
 
+// The registry manages the creation and destruction of entities,
+// add systems and components.
 class Registry
 {
     private:
@@ -158,9 +163,11 @@ class Registry
         std::set<Entity> entitiesToBeAdded;
         std::set<Entity> entitiesToBeKilled;
 
+        // (one tag name per entity)
        	std::unordered_map<std::string, Entity> entityPerTag;
         std::unordered_map<int, std::string> tagPerEntity;
 
+        // (a set of entities per group name)
         std::unordered_map<std::string, std::set<Entity>> entitiesPerGroup;
         std::unordered_map<int, std::string> groupPerEntity;
 
