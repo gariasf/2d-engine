@@ -11,6 +11,9 @@
 #include "../Logger/Logger.h"
 
 const unsigned int MAX_COMPONENTS = 32;
+
+// We use a bitset to keep track of which components an entity has,
+// and also helps keep track of which entities a system is interested in.
 typedef std::bitset<MAX_COMPONENTS> Signature;
 
 struct IComponent
@@ -19,6 +22,7 @@ protected:
     static int nextId;
 };
 
+// Used to assign a unique id to a component type
 template <typename TComponent>
 class Component : public IComponent
 {
@@ -40,6 +44,11 @@ public:
     Entity(const Entity& entity) = default;
     void Kill();
     int GetId() const;
+
+    void Tag(const std::string& tag);
+   	bool HasTag(const std::string& tag) const;
+   	void Group(const std::string& group);
+   	bool BelongsToGroup(const std::string& group) const;
 
     Entity &operator=(const Entity &other) = default;
     bool operator==(const Entity &other) const
@@ -149,6 +158,12 @@ class Registry
         std::set<Entity> entitiesToBeAdded;
         std::set<Entity> entitiesToBeKilled;
 
+       	std::unordered_map<std::string, Entity> entityPerTag;
+        std::unordered_map<int, std::string> tagPerEntity;
+
+        std::unordered_map<std::string, std::set<Entity>> entitiesPerGroup;
+        std::unordered_map<int, std::string> groupPerEntity;
+
         std::deque<int> freeIds;
     public:
         Registry() {
@@ -163,6 +178,16 @@ class Registry
 
         Entity CreateEntity();
         void KillEntity(Entity entity);
+
+        void TagEntity(Entity entity, const std::string& tag);
+		bool EntityHasTag(Entity entity, const std::string& tag) const;
+		Entity GetEntityByTag(const std::string& tag) const;
+		void RemoveEntityTag(Entity entity);
+
+		void GroupEntity(Entity entity, const std::string& group);
+		bool EntityBelongsToGroup(Entity entity, const std::string& group) const;
+		std::vector<Entity> GetEntitiesByGroup(const std::string& group) const;
+		void RemoveEntityGroup(Entity entity);
 
         template <typename TComponent, typename ...TArgs> void AddComponent(
             Entity entity,
