@@ -24,8 +24,8 @@ struct SpriteComponent
         this->assetId = assetId;
         this->width = width;
         this->height = height;
-        this->isFixed = isFixed;
         this->zIndex = zIndex;
+        this->isFixed = isFixed;
         this->srcRect = {srcRectX, srcRectY, width, height};
     }
 };
