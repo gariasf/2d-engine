@@ -135,7 +135,6 @@ void Game::LoadLevel(int level) {
     assetStore->AddTexture(renderer, "bullet-image", "./assets/images/bullet.png");
     assetStore->AddTexture(renderer, "tilemap-image", "./assets/tilemaps/jungle.png");
 
-
     int tileSize = 32;
     double tileScale = 2.0;
     int mapNumCols = 25;

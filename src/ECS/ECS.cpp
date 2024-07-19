@@ -168,6 +168,13 @@ void Registry::Update() {
     for(auto entity: entitiesToBeKilled) {
         RemoveEntityFromSystems(entity);
         componentSignatures[entity.GetId()].reset();
+
+        for(auto pool: componentPools) {
+            if(pool) {
+                pool->Remove(entity.GetId());
+            }
+        }
+
         freeIds.push_back(entity.GetId());
         Logger::Log("Entity " + std::to_string(entity.GetId()) + " was killed.");
 
