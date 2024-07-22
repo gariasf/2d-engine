@@ -14,6 +14,7 @@
 #include "../Systems/DamageSystem.h"
 #include "../Systems/RenderTextSystem.h"
 #include "../Systems/RenderHealthBarSystem.h"
+#include "../Systems/ScriptSystem.h"
 #include <iostream>
 #include "glm/glm.hpp"
 #include <SDL2/SDL.h>
@@ -128,6 +129,7 @@ void Game::Setup()
     registry->AddSystem<ProjectileLifecycleSystem>();
     registry->AddSystem<RenderTextSystem>();
     registry->AddSystem<RenderHealthBarSystem>();
+    //registry->AddSystem<ScriptSystem>();
 
     LevelLoader loader;
     lua.open_libraries(sol::lib::base, sol::lib::math, sol::lib::os);
@@ -161,6 +163,7 @@ void Game::Update()
     registry->GetSystem<ProjectileEmitSystem>().Update(registry);
     registry->GetSystem<CameraMovementSystem>().Update(camera);
     registry->GetSystem<ProjectileLifecycleSystem>().Update();
+   // registry->GetSystem<ScriptSystem>().Update();
 }
 void Game::Render()
 {
