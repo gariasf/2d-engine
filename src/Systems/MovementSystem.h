@@ -69,13 +69,13 @@ class MovementSystem: public System {
                     transform.position.y = transform.position.y > Game::mapHeight - paddingBottom ? Game::mapHeight - paddingBottom : transform.position.y;
                 }
 
-                int mapMargin = 100;
+                int cullingMargin = 200;
 
                 bool isEntityOutsideMap = (
-                    transform.position.x < -mapMargin ||
-                    transform.position.x > Game::mapWidth + mapMargin ||
-                    transform.position.y < -mapMargin ||
-                    transform.position.y > Game::mapHeight + mapMargin
+                    transform.position.x < -cullingMargin ||
+                    transform.position.x > Game::mapWidth + cullingMargin ||
+                    transform.position.y < -cullingMargin ||
+                    transform.position.y > Game::mapHeight + cullingMargin
                 );
 
                 if(isEntityOutsideMap && !entity.HasTag("player")) {

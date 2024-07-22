@@ -1,15 +1,14 @@
 #pragma once
 
-#include <SDL2/SDL.h>
-#include <memory>
-
 #include "../ECS/ECS.h"
 #include "../AssetStore/AssetStore.h"
 #include "../EventBus/EventBus.h"
+#include <SDL2/SDL.h>
+#include <memory>
+#include <sol/sol.hpp>
 
 const int FPS = 60;
 const int MS_PER_FRAME = 1000 / FPS;
-
 
 class Game
 {
@@ -21,6 +20,7 @@ private:
     SDL_Renderer *renderer;
     SDL_Rect camera;
 
+    sol::state lua;
     std::unique_ptr<Registry> registry;
     std::unique_ptr<AssetStore> assetStore;
     std::unique_ptr<EventBus> eventBus;
@@ -32,7 +32,6 @@ public:
     void Run();
     void ProcessInput();
     void Setup();
-    void LoadLevel(int level);
     void Update();
     void Render();
     void Destroy();
