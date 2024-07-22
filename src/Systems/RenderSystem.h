@@ -37,7 +37,7 @@ public:
                 renderableEntity.transform.position.y > camera.y + camera.h
             );
 
-            if(isEntityOutsideCameraView) {
+            if(isEntityOutsideCameraView && !renderableEntity.sprite.isFixed) {
                 continue;
             }
 
